@@ -12,13 +12,13 @@ function SpotifyTransfer() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("connected") === "spotify") {
       setSpotifyConnected(true);
-      window.history.replaceState({}, document.title, window.location.pathname); // Nettoie l'URL
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
 
   // 🔹 Récupération des playlists Spotify
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/spotify/playlists')
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/spotify/playlists`)
       .then(res => res.json())
       .then(data => {
         if (data.playlists) setPlaylists(data.playlists);
@@ -34,12 +34,12 @@ function SpotifyTransfer() {
     setYoutubeLinks([]);
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/spotify/playlist-tracks/${playlistId}`);
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/spotify/playlist-tracks/${playlistId}`);
       const data = await res.json();
 
       if (!data.tracks) throw new Error(data.error || 'Erreur récupération musiques playlist');
 
-      const ytRes = await fetch('http://127.0.0.1:5000/youtube/search', {
+      const ytRes = await fetch(`${process.env.REACT_APP_BACKEND_URL}/youtube/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tracks: data.tracks })
@@ -58,26 +58,25 @@ function SpotifyTransfer() {
 
   // 🔹 Connexion Spotify
   const handleConnectSpotify = async () => {
-    const res = await fetch("http://127.0.0.1:5000/spotify/login");
+    const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/spotify/login`);
     const data = await res.json();
     alert("🔐 Une page va s'ouvrir. Connecte-toi, copie-colle le lien si besoin !");
     window.location.href = data.url;
   };
 
   return (
-
-    
     <div style={{ padding: 20 }}>
       <div style={{ marginBottom: '20px' }}>
-  <a 
-    href="https://youtu.be/IK1IT_c2wx8?si=CHyla29-X-LusyBl" 
-    target="_blank" 
-    rel="noopener noreferrer"
-    style={{ color: '#1DB954', textDecoration: 'none', fontWeight: 'bold' }}
-  >
-    ▶️ CL1cK M3 4 a yTb TuToR1Al 2 h0W t0 Us3 mY ApP!
-  </a>
-</div>
+        <a 
+          href="https://youtu.be/IK1IT_c2wx8?si=CHyla29-X-LusyBl" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          style={{ color: '#1DB954', textDecoration: 'none', fontWeight: 'bold' }}
+        >
+          ▶️ CL1cK M3 4 a yTb TuToR1Al 2 h0W t0 Us3 mY ApP!
+        </a>
+      </div>
+
       <h2 className="title">Spotify 2 YouTube !</h2>
 
       {!spotifyConnected && (
